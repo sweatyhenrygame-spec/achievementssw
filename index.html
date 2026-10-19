@@ -273,6 +273,70 @@
       border-radius: inherit;
     }
 
+    /* Питомец справа от аватара */
+    .profile-row {
+      position: relative;
+      width: 220px;
+      margin: 0 auto 20px;
+    }
+    .profile-row .avatar {
+      margin: 0;
+    }
+    .pet-display {
+      position: absolute;
+      top: 50%;
+      right: -84px;
+      transform: translateY(-50%);
+      font-size: 64px;              /* чуть меньше аватара (220px) */
+      line-height: 1;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+      animation: petBob 2.2s ease-in-out infinite;
+      user-select: none;
+      pointer-events: none;
+    }
+    .pet-display.pop { animation: petPop 0.45s ease, petBob 2.2s ease-in-out 0.45s infinite; }
+    @keyframes petBob {
+      0%, 100% { transform: translateY(-50%) rotate(-3deg); }
+      50%      { transform: translateY(calc(-50% - 6px)) rotate(3deg); }
+    }
+    @keyframes petPop {
+      0%   { transform: translateY(-50%) scale(0); }
+      70%  { transform: translateY(-50%) scale(1.25); }
+      100% { transform: translateY(-50%) scale(1); }
+    }
+
+    /* Выбор питомца под аватаром */
+    .pet-picker {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: -6px 0 24px;
+      flex-wrap: wrap;
+    }
+    .pet-btn {
+      font-size: 30px;
+      line-height: 1;
+      width: 52px;
+      height: 52px;
+      padding: 0;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .pet-btn:hover { transform: scale(1.12); background: rgba(255,255,255,0.12); }
+    .pet-btn.active {
+      border-color: #4ecdc4;
+      box-shadow: 0 0 14px rgba(78,205,196,0.6);
+      background: rgba(78,205,196,0.18);
+    }
+    @media (max-width: 520px) {
+      .profile-row { width: 180px; }
+      .pet-display { font-size: 48px; right: -58px; }
+      .pet-btn { width: 44px; height: 44px; font-size: 24px; }
+    }
+
     .name {
       font-size: 48px;
       font-weight: bold;
@@ -625,9 +689,13 @@
     <button class="back-button" onclick="goBack()">Назад</button>
 
     <div class="profile">
-      <div class="avatar" id="avatarWrap">
-        <img src="images/avatar_default.png" alt="Аватар" id="avatarImg">
+      <div class="profile-row">
+        <div class="avatar" id="avatarWrap">
+          <img src="images/avatar_default.png" alt="Аватар" id="avatarImg">
+        </div>
+        <span class="pet-display hidden" id="petDisplay"></span>
       </div>
+      <div class="pet-picker" id="petPicker"></div>
       <h1 class="name" id="userName">Имя</h1>
     </div>
 
@@ -694,6 +762,62 @@
 
     let currentUser = null;
 
+    /* ===== Питомцы профиля ===== */
+    const PETS = [
+      { id: 'cat',     emoji: '🐱', label: 'Кот' },
+      { id: 'dog',     emoji: '🐶', label: 'Собака' },
+      { id: 'panda',   emoji: '🐼', label: 'Панда' },
+      { id: 'pig',     emoji: '🐷', label: 'Свинка' },
+      { id: 'giraffe', emoji: '🦒', label: 'Жираф' },
+      { id: 'peacock', emoji: '🦚', label: 'Павлин' }
+    ];
+    const PET_KEY = 'petSelections_v1'; // выбор питомца для каждого профиля
+
+    function getPetSelections() {
+      try { return JSON.parse(localStorage.getItem(PET_KEY)) || {}; }
+      catch (e) { return {}; }
+    }
+    function savePetSelections(sel) {
+      localStorage.setItem(PET_KEY, JSON.stringify(sel));
+    }
+
+    function renderPetPicker() {
+      const picker = document.getElementById('petPicker');
+      const sel = getPetSelections();
+      const chosen = currentUser ? sel[currentUser] : null;
+      picker.innerHTML = PETS.map(p =>
+        `<button class="pet-btn${chosen === p.id ? ' active' : ''}" title="${p.label}" onclick="togglePet('${p.id}')">${p.emoji}</button>`
+      ).join('');
+      updatePetDisplay(false);
+    }
+
+    function togglePet(id) {
+      const sel = getPetSelections();
+      if (sel[currentUser] === id) delete sel[currentUser];  // повторный клик — убрать
+      else sel[currentUser] = id;
+      savePetSelections(sel);
+      renderPetPicker();
+      updatePetDisplay(true);
+    }
+
+    function updatePetDisplay(pop) {
+      const el = document.getElementById('petDisplay');
+      const chosen = getPetSelections()[currentUser];
+      const pet = PETS.find(p => p.id === chosen);
+      if (pet) {
+        el.textContent = pet.emoji;
+        el.classList.remove('hidden');
+        if (pop) {
+          el.classList.remove('pop');
+          void el.offsetWidth; // перезапуск анимации
+          el.classList.add('pop');
+        }
+      } else {
+        el.textContent = '';
+        el.classList.add('hidden');
+      }
+    }
+
     /* Копилки на экране выбора: суммарные баллы за ачивки каждого профиля */
     function renderPiggyBanks() {
       for (const name of Object.keys(users)) {
@@ -755,6 +879,7 @@
       const user = users[currentUser];
       document.getElementById('userName').textContent = currentUser;
       document.getElementById('avatarImg').src = user.avatar;
+      renderPetPicker();
 
       // Подсчёт баллов
       let totalPoints = 0;
