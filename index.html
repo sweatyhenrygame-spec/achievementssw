@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Витрина Ачивок</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -69,6 +69,8 @@
     }
 
     /* ===== Анимация молний на экране выбора профиля ===== */
+    /* Молния идёт «паутинкой» по диагонали: из левого верхнего угла в правый нижний.
+       Слой находится ПОД окном выбора профиля (z-index ниже, чем у .name-box). */
     .lightning-layer {
       position: absolute;
       top: 0;
@@ -81,52 +83,70 @@
 
     .name-box { position: relative; z-index: 2; }
 
+    .spider-bolt {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      filter: drop-shadow(0 0 4px rgba(210, 228, 255, 0.95)) drop-shadow(0 0 14px rgba(140, 180, 255, 0.55));
+    }
+
+    /* Основной разряд — рисуется «от веретена к нити»: длина линии анимируется вдоль всего пути */
+    .spider-bolt .main-strike {
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+      animation: boltWeave 4s ease-in-out infinite;
+    }
+
+    /* Боковые ответвления («ниточки паутины») загорают с задержками */
+    .spider-bolt .tendril {
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+      opacity: 0;
+      animation: tendrilFlash 4s ease-in-out infinite;
+    }
+    .spider-bolt .t1 { animation-delay: 0.55s; }
+    .spider-bolt .t2 { animation-delay: 0.85s; }
+    .spider-bolt .t3 { animation-delay: 1.15s; }
+
+    @keyframes boltWeave {
+      0%   { stroke-dashoffset: 100; opacity: 0; }
+      4%   { opacity: 1; }
+      55%  { stroke-dashoffset: 0; opacity: 1; }
+      72%  { stroke-dashoffset: 0; opacity: 1; }
+      88%  { stroke-dashoffset: 0; opacity: 0; }
+      100% { stroke-dashoffset: 100; opacity: 0; }
+    }
+
+    @keyframes tendrilFlash {
+      0%, 10%   { stroke-dashoffset: 100; opacity: 0; }
+      14%       { opacity: 0.9; }
+      30%       { stroke-dashoffset: 0; opacity: 0.9; }
+      48%       { stroke-dashoffset: 0; opacity: 0; }
+      100%      { stroke-dashoffset: 100; opacity: 0; }
+    }
+
+    /* Мягкая фоновая вспышка синхронно с ударом */
     .flash-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at 50% 30%, rgba(200, 220, 255, 0.35), rgba(180, 200, 255, 0.1) 60%, transparent 100%);
+      background: radial-gradient(circle at 20% 15%, rgba(200, 220, 255, 0.3), rgba(180, 200, 255, 0.08) 55%, transparent 100%);
       opacity: 0;
       pointer-events: none;
-      animation: skyFlash 3.2s ease-in-out infinite;
+      animation: skyFlash 4s ease-in-out infinite;
     }
 
     @keyframes skyFlash {
       0%, 100% { opacity: 0; }
-      42% { opacity: 0; }
-      45% { opacity: 0.9; }
-      47% { opacity: 0.2; }
-      50% { opacity: 0.75; }
-      55% { opacity: 0; }
-    }
-
-    .bolt {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      opacity: 0;
-      filter: drop-shadow(0 0 6px rgba(170, 200, 255, 0.9)) drop-shadow(0 0 18px rgba(120, 160, 255, 0.6));
-    }
-
-    .bolt svg {
-      height: 100%;
-      width: auto;
-      display: block;
-    }
-
-    .bolt-1 { left: 12%; animation: boltStrike 3.2s linear infinite; }
-    .bolt-2 { left: 78%; animation: boltStrike 3.2s linear infinite; animation-delay: 1.6s; transform: scaleX(-1); }
-    .bolt-3 { left: 45%; animation: boltStrike 3.2s linear infinite; animation-delay: 0.8s; opacity: 0; }
-
-    @keyframes boltStrike {
-      0%, 100% { opacity: 0; }
-      43% { opacity: 0; }
-      44% { opacity: 1; }
-      46% { opacity: 0.15; }
-      48% { opacity: 0.9; }
-      52% { opacity: 0; }
+      8%  { opacity: 0; }
+      12% { opacity: 0.7; }
+      15% { opacity: 0.15; }
+      18% { opacity: 0.55; }
+      30% { opacity: 0; }
     }
 
     /* Акцентный цвет окна выбора профиля — меняется при наведении на кнопку */
@@ -561,30 +581,76 @@
       }
       .profile { margin-top: 80px; }
       .name { font-size: 32px; }
+
+      /* ===== Адаптация экрана выбора профиля под мобильные ===== */
+      .name-box {
+        padding: 22px 16px;
+        width: min(94vw, 480px);
+        border-radius: 16px;
+      }
+      .name-box h2 {
+        font-size: 22px;
+        margin-bottom: 18px;
+      }
+      .name-buttons {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .name-btn {
+        aspect-ratio: 1 / 1;   /* на мобильных кнопки — одинаковые квадраты */
+        font-size: 15px;
+        border-radius: 12px;
+        gap: 6px;
+        padding: 8px;
+      }
+      .name-btn-avatar {
+        width: 44px;
+        height: 44px;
+        border-width: 2px;
+      }
+      /* Отключаем scale-увеличение при нажатии, чтобы кнопки не «прыгали» */
+      .name-btn:hover { transform: none; }
+      .name-btn:active {
+        background: color-mix(in srgb, var(--accent) 40%, transparent);
+        border-color: var(--accent);
+        box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 55%, transparent);
+      }
+      /* Молния тоньше на маленьких экранах */
+      .spider-bolt .main-strike { stroke-width: 2; }
+    }
+
+    /* Очень узкие экраны (смартфоны в портретной ориентации) */
+    @media (max-width: 400px) {
+      .name-box { padding: 18px 12px; }
+      .name-box h2 { font-size: 19px; }
+      .name-btn { font-size: 13px; }
+      .name-btn-avatar { width: 38px; height: 38px; }
     }
   </style>
 </head>
 <body>
   <!-- Экран выбора имени -->
   <div class="name-screen" id="nameScreen">
-    <!-- Слой анимации молний -->
+    <!-- Слой анимации молний: паутинка из левого верхнего угла в правый нижний, под окном выбора -->
     <div class="lightning-layer">
       <div class="flash-overlay"></div>
-      <div class="bolt bolt-1">
-        <svg viewBox="0 0 100 800" xmlns="http://www.w3.org/2000/svg">
-          <path d="M55 0 L40 140 L62 150 L30 320 L52 330 L18 520 L44 530 L5 800 L38 540 L14 530 L46 340 L24 330 L56 160 L36 150 L62 10 Z" fill="#ffffff" stroke="#cfe0ff" stroke-width="2"/>
-        </svg>
-      </div>
-      <div class="bolt bolt-2">
-        <svg viewBox="0 0 100 800" xmlns="http://www.w3.org/2000/svg">
-          <path d="M55 0 L40 140 L62 150 L30 320 L52 330 L18 520 L44 530 L5 800 L38 540 L14 530 L46 340 L24 330 L56 160 L36 150 L62 10 Z" fill="#f4f8ff" stroke="#bcd2ff" stroke-width="2"/>
-        </svg>
-      </div>
-      <div class="bolt bolt-3">
-        <svg viewBox="0 0 100 800" xmlns="http://www.w3.org/2000/svg">
-          <path d="M50 0 L44 200 L60 210 L36 420 L52 430 L28 640 L46 650 L30 800 L54 640 L38 630 L62 430 L46 420 L68 210 L52 200 L58 0 Z" fill="#eef3ff" stroke="#c9d9ff" stroke-width="1.5"/>
-        </svg>
-      </div>
+      <svg class="spider-bolt" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Основной зигзагообразный разряд по диагонали -->
+        <path class="main-strike" pathLength="100" vector-effect="non-scaling-stroke"
+          d="M0 0 L14 9 L9 15 L27 24 L21 31 L40 40 L34 47 L54 55 L48 62 L68 70 L62 77 L83 85 L78 91 L100 100"
+          fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="miter"/>
+        <!-- Тонкая яркая сердцевина разряда -->
+        <path class="main-strike" pathLength="100" vector-effect="non-scaling-stroke"
+          d="M0 0 L14 9 L9 15 L27 24 L21 31 L40 40 L34 47 L54 55 L48 62 L68 70 L62 77 L83 85 L78 91 L100 100"
+          fill="none" stroke="#eaf3ff" stroke-width="1" stroke-linejoin="miter"/>
+        <!-- Боковые ответвления-«ниточки» паутины -->
+        <path class="tendril t1" pathLength="100" vector-effect="non-scaling-stroke"
+          d="M27 24 L40 18 L37 10 L50 6" fill="none" stroke="#dcebff" stroke-width="1.4"/>
+        <path class="tendril t2" pathLength="100" vector-effect="non-scaling-stroke"
+          d="M54 55 L68 48 L66 38 L80 32" fill="none" stroke="#dcebff" stroke-width="1.4"/>
+        <path class="tendril t3" pathLength="100" vector-effect="non-scaling-stroke"
+          d="M40 40 L30 52 L36 64 L24 76" fill="none" stroke="#dcebff" stroke-width="1.2"/>
+      </svg>
     </div>
     <div class="name-box">
       <h2>Выберите профиль</h2>
