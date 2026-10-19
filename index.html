@@ -129,6 +129,12 @@
       gap: 8px;
     }
 
+    .name-btn-media {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .name-btn-avatar {
       width: 64px;
       height: 64px;
@@ -137,6 +143,43 @@
       border: 3px solid color-mix(in srgb, var(--accent) 70%, transparent);
       background: rgba(255,255,255,0.06);
       transition: all 0.3s ease;
+    }
+
+    /* Копилка — общий счётчик баллов на экране выбора профиля */
+    .piggy-bank {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+      background: linear-gradient(145deg,
+        color-mix(in srgb, var(--accent) 25%, #1b1b2a),
+        color-mix(in srgb, var(--accent) 8%, #101018));
+      box-shadow: inset 0 1px 4px rgba(255,255,255,0.15),
+                  0 2px 10px rgba(0,0,0,0.4);
+      font-size: 15px;
+      font-weight: bold;
+      color: #fff;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+    }
+
+    .piggy-bank svg {
+      width: 22px;
+      height: 22px;
+      fill: color-mix(in srgb, var(--accent) 85%, #ffd86b);
+      filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 60%, transparent));
+    }
+
+    .piggy-bank .coins {
+      color: color-mix(in srgb, var(--accent) 40%, #ffe28a);
+    }
+
+    .name-btn:hover .piggy-bank {
+      border-color: var(--accent);
+      box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 55%, transparent);
+      transform: scale(1.08);
     }
 
     .name-btn:hover {
@@ -529,6 +572,9 @@
         height: 44px;
         border-width: 2px;
       }
+      .name-btn-media { flex-direction: column; gap: 5px; }
+      .piggy-bank { font-size: 12px; padding: 3px 8px; }
+      .piggy-bank svg { width: 15px; height: 15px; }
       /* Отключаем scale-увеличение при нажатии, чтобы кнопки не «прыгали» */
       .name-btn:hover { transform: none; }
       .name-btn:active {
@@ -553,10 +599,10 @@
     <div class="name-box">
       <h2>Выберите профиль</h2>
       <div class="name-buttons">
-        <button class="name-btn" onmouseenter="setProfileAccent('Вадим')" onmouseleave="clearProfileAccent()" onclick="selectName('Вадим')"><img class="name-btn-avatar" src="images/avatar_vadim.png" alt="Аватар Вадим">Вадим</button>
-        <button class="name-btn" onmouseenter="setProfileAccent('Эрика')" onmouseleave="clearProfileAccent()" onclick="selectName('Эрика')"><img class="name-btn-avatar" src="images/avatar_erika.png" alt="Аватар Эрика">Эрика</button>
-        <button class="name-btn" onmouseenter="setProfileAccent('Катя')" onmouseleave="clearProfileAccent()" onclick="selectName('Катя')"><img class="name-btn-avatar" src="images/avatar_katya.png" alt="Аватар Катя">Катя</button>
-        <button class="name-btn" onmouseenter="setProfileAccent('Леша')" onmouseleave="clearProfileAccent()" onclick="selectName('Леша')"><img class="name-btn-avatar" src="images/avatar_lesha.png" alt="Аватар Леша">Леша</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Вадим')" onmouseleave="clearProfileAccent()" onclick="selectName('Вадим')"><div class="name-btn-media"><img class="name-btn-avatar" src="images/avatar_vadim.png" alt="Аватар Вадим"><span class="piggy-bank" title="Всего баллов за ачивки"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5c0-3.3-3.1-6-7-6-1.3 0-2.5.3-3.5.8L8 5c-.3 0-.6.2-.7.5l-.6 1.8C4.9 8.2 4 9.7 4 11.5c0 .8-1 1.5-1 2.5 0 .8.7 1.3 1.5 1.6l.5 1.9c.1.4.5.6.9.5l1.6-.5c.6.2 1.3.3 2 .4V21h2v-2h2v2h2v-2.1c3-.4 5.5-2.8 5.5-5.9zM9.5 15a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5-6.5c1.7.2 3 1.3 3 2.7v.3h-2.5v-1.5H14V8.5z"/></svg><span class="coins" id="bank-Вадим">…</span></span></div>Вадим</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Эрика')" onmouseleave="clearProfileAccent()" onclick="selectName('Эрика')"><div class="name-btn-media"><img class="name-btn-avatar" src="images/avatar_erika.png" alt="Аватар Эрика"><span class="piggy-bank" title="Всего баллов за ачивки"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5c0-3.3-3.1-6-7-6-1.3 0-2.5.3-3.5.8L8 5c-.3 0-.6.2-.7.5l-.6 1.8C4.9 8.2 4 9.7 4 11.5c0 .8-1 1.5-1 2.5 0 .8.7 1.3 1.5 1.6l.5 1.9c.1.4.5.6.9.5l1.6-.5c.6.2 1.3.3 2 .4V21h2v-2h2v2h2v-2.1c3-.4 5.5-2.8 5.5-5.9zM9.5 15a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5-6.5c1.7.2 3 1.3 3 2.7v.3h-2.5v-1.5H14V8.5z"/></svg><span class="coins" id="bank-Эрика">…</span></span></div>Эрика</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Катя')" onmouseleave="clearProfileAccent()" onclick="selectName('Катя')"><div class="name-btn-media"><img class="name-btn-avatar" src="images/avatar_katya.png" alt="Аватар Катя"><span class="piggy-bank" title="Всего баллов за ачивки"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5c0-3.3-3.1-6-7-6-1.3 0-2.5.3-3.5.8L8 5c-.3 0-.6.2-.7.5l-.6 1.8C4.9 8.2 4 9.7 4 11.5c0 .8-1 1.5-1 2.5 0 .8.7 1.3 1.5 1.6l.5 1.9c.1.4.5.6.9.5l1.6-.5c.6.2 1.3.3 2 .4V21h2v-2h2v2h2v-2.1c3-.4 5.5-2.8 5.5-5.9zM9.5 15a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5-6.5c1.7.2 3 1.3 3 2.7v.3h-2.5v-1.5H14V8.5z"/></svg><span class="coins" id="bank-Катя">…</span></span></div>Катя</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Леша')" onmouseleave="clearProfileAccent()" onclick="selectName('Леша')"><div class="name-btn-media"><img class="name-btn-avatar" src="images/avatar_lesha.png" alt="Аватар Леша"><span class="piggy-bank" title="Всего баллов за ачивки"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5c0-3.3-3.1-6-7-6-1.3 0-2.5.3-3.5.8L8 5c-.3 0-.6.2-.7.5l-.6 1.8C4.9 8.2 4 9.7 4 11.5c0 .8-1 1.5-1 2.5 0 .8.7 1.3 1.5 1.6l.5 1.9c.1.4.5.6.9.5l1.6-.5c.6.2 1.3.3 2 .4V21h2v-2h2v2h2v-2.1c3-.4 5.5-2.8 5.5-5.9zM9.5 15a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5-6.5c1.7.2 3 1.3 3 2.7v.3h-2.5v-1.5H14V8.5z"/></svg><span class="coins" id="bank-Леша">…</span></span></div>Леша</button>
       </div>
     </div>
   </div>
@@ -645,6 +691,17 @@
     };
 
     let currentUser = null;
+
+    /* Копилки на экране выбора: суммарные баллы за ачивки каждого профиля */
+    function renderPiggyBanks() {
+      for (const name of Object.keys(users)) {
+        const el = document.getElementById('bank-' + name);
+        if (!el) continue;
+        const total = users[name].achievements.reduce((sum, a) => sum + (a.points || 0), 0);
+        el.textContent = total;
+      }
+    }
+    renderPiggyBanks();
 
     function selectName(name) {
       currentUser = name;
