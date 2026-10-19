@@ -296,6 +296,7 @@
     }
 
     /* Типы ачивок */
+    /* Обычная — белая — 1 балл */
     .achievement.common {
       border-color: rgba(255, 255, 255, 0.3);
     }
@@ -308,66 +309,70 @@
       color: #fff;
     }
 
-    .achievement.rare {
+    /* Необычная — синяя — 2 балла */
+    .achievement.uncommon {
       border-color: rgba(59, 130, 246, 0.3);
-      animation: glowRare 2s ease infinite;
+      animation: glowUncommon 2s ease infinite;
     }
-    @keyframes glowRare {
+    @keyframes glowUncommon {
       0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
       50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
     }
-    .achievement.rare:hover {
+    .achievement.uncommon:hover {
       border-color: rgba(59, 130, 246, 0.6);
     }
-    .achievement.rare .achievement-points {
+    .achievement.uncommon .achievement-points {
       background: rgba(59, 130, 246, 0.3);
       color: #3b82f6;
     }
 
-    .achievement.legendary {
+    /* Редкая — фиолетовая — 3 балла */
+    .achievement.rare {
       border-color: rgba(168, 85, 247, 0.3);
-      animation: glowLegendary 2s ease infinite;
+      animation: glowRare 2s ease infinite;
     }
-    @keyframes glowLegendary {
+    @keyframes glowRare {
       0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); }
       50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); }
     }
-    .achievement.legendary:hover {
+    .achievement.rare:hover {
       border-color: rgba(168, 85, 247, 0.6);
     }
-    .achievement.legendary .achievement-points {
+    .achievement.rare .achievement-points {
       background: rgba(168, 85, 247, 0.3);
       color: #a855f7;
     }
 
+    /* Легендарная — золотая — 4 балла */
+    .achievement.legendary {
+      border-color: rgba(234, 179, 8, 0.3);
+      animation: glowLegendary 2s ease infinite;
+    }
+    @keyframes glowLegendary {
+      0%, 100% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(234, 179, 8, 0.6); }
+    }
+    .achievement.legendary:hover {
+      border-color: rgba(234, 179, 8, 0.6);
+    }
+    .achievement.legendary .achievement-points {
+      background: rgba(234, 179, 8, 0.3);
+      color: #eab308;
+    }
+
+    /* Мифическая — красная — 5 баллов */
     .achievement.mythic {
-      border-color: rgba(234, 88, 12, 0.3);
+      border-color: rgba(239, 68, 68, 0.3);
       animation: glowMythic 2s ease infinite;
     }
     @keyframes glowMythic {
-      0%, 100% { box-shadow: 0 0 20px rgba(234, 88, 12, 0.3); }
-      50% { box-shadow: 0 0 40px rgba(234, 88, 12, 0.6); }
-    }
-    .achievement.mythic:hover {
-      border-color: rgba(234, 88, 12, 0.6);
-    }
-    .achievement.mythic .achievement-points {
-      background: rgba(234, 88, 12, 0.3);
-      color: #ea580c;
-    }
-
-    .achievement.godlike {
-      border-color: rgba(239, 68, 68, 0.3);
-      animation: glowGodlike 2s ease infinite;
-    }
-    @keyframes glowGodlike {
       0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
       50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.6); }
     }
-    .achievement.godlike:hover {
+    .achievement.mythic:hover {
       border-color: rgba(239, 68, 68, 0.6);
     }
-    .achievement.godlike .achievement-points {
+    .achievement.mythic .achievement-points {
       background: rgba(239, 68, 68, 0.3);
       color: #ef4444;
     }
@@ -449,9 +454,9 @@
         avatar: 'images/avatar_vadim.png',
         achievements: [
           { title: 'Первый код', desc: 'Написал первую программу', type: 'common', points: 1, icon: 'images/icon_vadim_first_code.png' },
-          { title: 'Мастер багов', desc: 'Исправил 100 багов', type: 'rare', points: 2, icon: 'images/icon_vadim_bug_master.png' },
-          { title: 'Легенда кода', desc: '1000 коммитов', type: 'legendary', points: 3, icon: 'images/icon_vadim_code_legend.png' },
-          { title: 'Мифический хакер', desc: 'Взломал невозможное', type: 'mythic', points: 4, icon: 'images/icon_vadim_mythic_hacker.png' }
+          { title: 'Мастер багов', desc: 'Исправил 100 багов', type: 'uncommon', points: 2, icon: 'images/icon_vadim_bug_master.png' },
+          { title: 'Легенда кода', desc: '1000 коммитов', type: 'rare', points: 3, icon: 'images/icon_vadim_code_legend.png' },
+          { title: 'Мифический хакер', desc: 'Взломал невозможное', type: 'legendary', points: 4, icon: 'images/icon_vadim_mythic_hacker.png' }
         ]
       },
       'Эрика': {
@@ -459,7 +464,7 @@
         avatar: 'images/avatar_erika.png',
         achievements: [
           { title: 'Первый шаг', desc: 'Начала путь', type: 'common', points: 1, icon: 'images/icon_erika_first_step.png' },
-          { title: 'Быстрая', desc: 'Пробежала 5 км', type: 'rare', points: 2, icon: 'images/icon_erika_fast.png' }
+          { title: 'Быстрая', desc: 'Пробежала 5 км', type: 'uncommon', points: 2, icon: 'images/icon_erika_fast.png' }
         ]
       },
       'Катя': {
@@ -473,7 +478,7 @@
         password: 'Люблю Вадика',
         avatar: 'images/avatar_lesha.png',
         achievements: [
-          { title: 'Любить Вадика', desc: 'Всем сердец', type: 'godlike', points: 5, icon: 'images/lesha-love-vadik.png' }
+          { title: 'Любить Вадика', desc: 'Всем сердец', type: 'mythic', points: 5, icon: 'images/lesha-love-vadik.png' }
         ]
       }
     };
@@ -548,10 +553,10 @@
       user.achievements.forEach(a => {
         const typeNames = {
           'common': 'Обычная',
+          'uncommon': 'Необычная',
           'rare': 'Редкая',
           'legendary': 'Легендарная',
-          'mythic': 'Мифическая',
-          'godlike': 'Богоподобная'
+          'mythic': 'Мифическая'
         };
         const div = document.createElement('div');
         div.className = `achievement ${a.type}`;
