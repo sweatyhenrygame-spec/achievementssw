@@ -257,11 +257,12 @@
       position: relative;
       width: 220px;
       height: 220px;
-      border-radius: 28px;           /* квадрат со скруглёнными углами */
-      border: none;                  /* рамку рисует отдельный слой поверх */
+      border-radius: 50%;            /* круглый аватар */
+      border: 5px solid #4ecdc4;     /* простая аккуратная рамка */
       margin: 0 auto 20px;
       overflow: hidden;
       background: rgba(0,0,0,0.3);   /* Фон на случай прозрачной картинки */
+      box-shadow: 0 0 20px rgba(78, 205, 196, 0.45);
     }
 
     .avatar img {
@@ -271,90 +272,6 @@
       object-fit: cover;
       border-radius: inherit;
     }
-
-    /* ===== Рамки аватара (выбор в профиле) ===== */
-    /* Слой рамки лежит ПОВЕРХ картинки (z-index выше), поэтому рамка всегда видна */
-    .frame-ring {
-      position: absolute;
-      inset: -10px;                  /* выступает за края аватара */
-      z-index: 5;                    /* выше картинки и фона */
-      pointer-events: none;          /* не мешает кликам */
-      border-radius: 38px;           /* чуть больше радиуса аватара — концентрично */
-      box-sizing: border-box;
-      border: 8px solid #4ecdc4;     /* классическая по умолчанию */
-      box-shadow:
-        0 0 0 2px rgba(0, 0, 0, 0.55),                       /* тёмная подложка — выделяет рамку на любом фоне */
-        0 0 22px 4px rgba(78, 205, 196, 0.65),               /* внешнее свечение */
-        inset 0 0 14px rgba(78, 205, 196, 0.55);             /* внутренняя подсветка каймы */
-    }
-
-    /* Классическая */
-    .frame-ring.frame-classic { border-color: #4ecdc4; }
-    /* Огненная — бегущее пламя */
-    .frame-ring.frame-fire {
-      border-color: transparent;
-      background: conic-gradient(from 0deg, #ff6b35, #ffd23f, #ff2e63, #ff6b35) border-box;
-      animation: frameRingSpin 3s linear infinite;
-      box-shadow: 0 0 0 2px rgba(0,0,0,0.55), 0 0 26px 6px rgba(255,107,53,0.7), inset 0 0 16px rgba(255,107,53,0.6);
-    }
-    /* Ледяная — пульсирующее свечение */
-    .frame-ring.frame-ice {
-      border-color: #7ee8fa;
-      animation: frameIcePulse 2.2s ease-in-out infinite;
-      box-shadow: 0 0 0 2px rgba(0,0,0,0.55), inset 0 0 14px rgba(126,232,250,0.6);
-    }
-    @keyframes frameIcePulse {
-      0%, 100% { box-shadow: 0 0 0 2px rgba(0,0,0,0.55), 0 0 18px 3px rgba(126,232,250,0.5), inset 0 0 14px rgba(126,232,250,0.6); }
-      50%      { box-shadow: 0 0 0 2px rgba(0,0,0,0.55), 0 0 40px 10px rgba(126,232,250,0.95), inset 0 0 20px rgba(126,232,250,0.9); }
-    }
-    /* Золотая — королевское мерцание */
-    .frame-ring.frame-gold {
-      border-color: transparent;
-      background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) border-box;
-      animation: frameGoldShine 3s ease-in-out infinite;
-      box-shadow: 0 0 0 2px rgba(0,0,0,0.55), inset 0 0 14px rgba(252,246,186,0.6);
-    }
-    @keyframes frameGoldShine {
-      0%, 100% { box-shadow: 0 0 0 2px rgba(0,0,0,0.55), 0 0 20px 4px rgba(252,246,186,0.45), inset 0 0 14px rgba(252,246,186,0.6); }
-      50%      { box-shadow: 0 0 0 2px rgba(0,0,0,0.55), 0 0 38px 10px rgba(252,246,186,0.95), inset 0 0 20px rgba(252,246,186,0.9); }
-    }
-    /* Неон — радужная бегущая рамка */
-    .frame-ring.frame-neon {
-      border-color: transparent;
-      background: conic-gradient(from 0deg, #ff0080, #ff8c00, #ffee00, #00ff87, #00cfff, #8a2be2, #ff0080) border-box;
-      animation: frameRingSpin 2.5s linear infinite;
-      box-shadow: 0 0 0 2px rgba(0,0,0,0.55), 0 0 26px 6px rgba(255,0,255,0.55), inset 0 0 16px rgba(255,0,255,0.5);
-    }
-    /* Галактика — космический перелив */
-    .frame-ring.frame-galaxy {
-      border-color: transparent;
-      animation: frameGalaxyShift 6s ease-in-out infinite alternate;
-      box-shadow: 0 0 0 2px rgba(0,0,0,0.55), 0 0 30px 8px rgba(138,43,226,0.7), inset 0 0 16px rgba(138,43,226,0.6);
-    }
-    @keyframes frameRingSpin {
-      from { filter: hue-rotate(0deg); }
-      to   { filter: hue-rotate(360deg); }
-    }
-    @keyframes frameGalaxyShift {
-      0%   { background: linear-gradient(45deg,  #0f0c29, #8a2be2, #4a00e0, #0f0c29) border-box; }
-      50%  { background: linear-gradient(200deg, #306bde, #c026d3, #0f0c29, #306bde) border-box; }
-      100% { background: linear-gradient(320deg, #8a2be2, #0f0c29, #c026d3, #8a2be2) border-box; }
-    }
-
-    /* Выбор рамки под аватаром */
-    .frame-picker { display: flex; justify-content: center; gap: 12px; margin: -8px auto 26px; flex-wrap: wrap; }
-    .frame-swatch {
-      width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
-      border: 2px solid rgba(255,255,255,0.25); padding: 0; transition: transform .2s, box-shadow .2s;
-    }
-    .frame-swatch:hover { transform: scale(1.15); }
-    .frame-swatch.active { transform: scale(1.2); box-shadow: 0 0 12px rgba(255,255,255,0.7); border-color: #fff; }
-    .sw-classic { background: #4ecdc4; }
-    .sw-fire    { background: conic-gradient(#ff6b35, #ffd23f, #ff2e63, #ff6b35); }
-    .sw-ice     { background: linear-gradient(135deg, #7ee8fa, #a8edea); }
-    .sw-gold    { background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728); }
-    .sw-neon    { background: conic-gradient(#ff0080, #ffee00, #00ff87, #00cfff, #8a2be2, #ff0080); }
-    .sw-galaxy  { background: linear-gradient(45deg, #0f0c29, #8a2be2, #c026d3); }
 
     .name {
       font-size: 48px;
@@ -710,11 +627,7 @@
     <div class="profile">
       <div class="avatar" id="avatarWrap">
         <img src="images/avatar_default.png" alt="Аватар" id="avatarImg">
-        <!-- Слой рамки поверх картинки -->
-        <div class="frame-ring frame-classic" id="frameRing"></div>
       </div>
-      <!-- Выбор рамки аватара -->
-      <div class="frame-picker" id="framePicker"></div>
       <h1 class="name" id="userName">Имя</h1>
     </div>
 
@@ -781,47 +694,6 @@
 
     let currentUser = null;
 
-    /* ===== Выбор рамки аватара ===== */
-    const FRAMES = [
-      { id: 'classic', label: 'Классическая' },
-      { id: 'fire',    label: 'Огненная' },
-      { id: 'ice',     label: 'Ледяная' },
-      { id: 'gold',    label: 'Золотая' },
-      { id: 'neon',    label: 'Неоновая' },
-      { id: 'galaxy',  label: 'Галактика' }
-    ];
-
-    function frameKey(name) { return 'frame_' + name; }
-
-    function getSavedFrame(name) {
-      try {
-        const saved = localStorage.getItem(frameKey(name));
-        return FRAMES.some(f => f.id === saved) ? saved : 'classic';
-      } catch (e) { return 'classic'; }
-    }
-
-    function applyFrame(frameId) {
-      const ring = document.getElementById('frameRing');
-      if (!ring) return;
-      FRAMES.forEach(f => ring.classList.remove('frame-' + f.id));
-      ring.classList.add('frame-' + frameId);
-    }
-
-    function renderFramePicker() {
-      const picker = document.getElementById('framePicker');
-      const current = getSavedFrame(currentUser);
-      picker.innerHTML = FRAMES.map(f =>
-        `<button class="frame-swatch sw-${f.id}${f.id === current ? ' active' : ''}" title="${f.label}" onclick="setFrame('${f.id}')"></button>`
-      ).join('');
-    }
-
-    function setFrame(frameId) {
-      if (!currentUser) return;
-      try { localStorage.setItem(frameKey(currentUser), frameId); } catch (e) {}
-      applyFrame(frameId);
-      renderFramePicker();
-    }
-
     /* Копилки на экране выбора: суммарные баллы за ачивки каждого профиля */
     function renderPiggyBanks() {
       for (const name of Object.keys(users)) {
@@ -883,10 +755,6 @@
       const user = users[currentUser];
       document.getElementById('userName').textContent = currentUser;
       document.getElementById('avatarImg').src = user.avatar;
-
-      // Рамка аватара: восстановить выбранную ранее для этого профиля
-      applyFrame(getSavedFrame(currentUser));
-      renderFramePicker();
 
       // Подсчёт баллов
       let totalPoints = 0;
