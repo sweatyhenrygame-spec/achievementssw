@@ -275,6 +275,33 @@
       opacity: 0.35;
     }
 
+    /* Фильтрация по клику на кристалл */
+    .counter-item {
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      user-select: none;
+    }
+
+    .counter-item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .counter-item.active {
+      border-color: #fff;
+      background: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
+      opacity: 1;
+    }
+
+    .filter-hint {
+      text-align: center;
+      margin: -15px 0 25px;
+      font-size: 0.85em;
+      opacity: 0.6;
+      min-height: 1.2em;
+    }
+
     .showcase h2 {
       text-align: center;
       font-size: 36px;
@@ -481,12 +508,14 @@
 
     <!-- Счётчик ачивок по редкости -->
     <div class="achievement-counter" id="achievementCounter"></div>
+    <div class="filter-hint" id="filterHint"></div>
 
     <div class="showcase">
       <h2>🏆 Витрина Ачивок</h2>
-      <div class="grid" id="achievementsGrid">
+      <div class="grid" id="achievementsGrid" style="display: none;">
         <!-- Ачивки будут добавлены через JavaScript -->
       </div>
+      <div class="grid" id="achievementsFiltered" style="display: none;"></div>
     </div>
   </div>
 
@@ -558,6 +587,7 @@
     function goBack() {
       // Сбрасываем состояние
       currentUser = null;
+      activeFilter = null;
       document.getElementById('passwordInput').value = '';
       
       // Скрываем профиль, показываем выбор имени
@@ -591,7 +621,7 @@
 
       document.getElementById('progressFill').style.width = `${progress}%`;
 
-      // Счётчик ачивок по редкости (кристалл + количество)
+      // Счётчик ачивок по редкости (кристалл + количество, клик = фильтр)
       const rarityInfo = [
         { type: 'common',    label: 'Обычная',    icon: 'images/crystal_common.png' },
         { type: 'uncommon',  label: 'Необычная',  icon: 'images/crystal_uncommon.png' },
@@ -605,25 +635,73 @@
         const count = user.achievements.filter(a => a.type === r.type).length;
         const item = document.createElement('div');
         item.className = 'counter-item' + (count === 0 ? ' zero' : '');
-        item.title = r.label;
+        item.title = r.label + ' — нажмите для фильтрации';
+        item.dataset.type = r.type;
         item.innerHTML = `
           <img src="${r.icon}" alt="${r.label}">
           <span class="counter-count">${count}</span>
         `;
+        item.addEventListener('click', () => toggleFilter(r.type, r.label));
         counter.appendChild(item);
       });
 
-      // Отображение ачивок
-      const grid = document.getElementById('achievementsGrid');
+      renderAchievements();
+    }
+
+    // Фильтрация витрины по клику на кристалл редкости
+    let activeFilter = null;
+
+    function toggleFilter(type, label) {
+      activeFilter = (activeFilter === type) ? null : type;
+      // Подсветка выбранного кристалла
+      document.querySelectorAll('#achievementCounter .counter-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.type === activeFilter);
+      });
+      renderAchievements();
+    }
+
+    function renderAchievements() {
+      const user = users[currentUser];
+      if (!user) return;
+
+      const gridAll = document.getElementById('achievementsGrid');
+      const gridFiltered = document.getElementById('achievementsFiltered');
+      const hint = document.getElementById('filterHint');
+
+      const typeNames = {
+        'common': 'Обычная',
+        'uncommon': 'Необычная',
+        'rare': 'Редкая',
+        'legendary': 'Легендарная',
+        'mythic': 'Мифическая'
+      };
+
+      const list = activeFilter
+        ? user.achievements.filter(a => a.type === activeFilter)
+        : user.achievements;
+
+      const grid = activeFilter ? gridFiltered : gridAll;
+      const other = activeFilter ? gridAll : gridFiltered;
+      other.innerHTML = '';
+      other.style.display = 'none';
       grid.innerHTML = '';
-      user.achievements.forEach(a => {
-        const typeNames = {
-          'common': 'Обычная',
-          'uncommon': 'Необычная',
-          'rare': 'Редкая',
-          'legendary': 'Легендарная',
-          'mythic': 'Мифическая'
-        };
+
+      if (activeFilter) {
+        const label = typeNames[activeFilter];
+        hint.textContent = `Фильтр: ${label}. Нажмите на 🔍 или тот же кристалл, чтобы сбросить`;
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'counter-item';
+        clearBtn.style.margin = '0 auto 20px';
+        clearBtn.style.display = 'flex';
+        clearBtn.textContent = '🔍 Показать все';
+        clearBtn.addEventListener('click', () => toggleFilter(activeFilter, label));
+        hint.appendChild(document.createElement('br'));
+        hint.appendChild(clearBtn);
+      } else {
+        hint.innerHTML = '';
+      }
+
+      list.forEach(a => {
         const div = document.createElement('div');
         div.className = `achievement ${a.type}`;
         div.innerHTML = `
@@ -636,6 +714,12 @@
         `;
         grid.appendChild(div);
       });
+
+      grid.style.display = list.length ? 'grid' : 'none';
+
+      if (activeFilter && list.length === 0) {
+        hint.textContent = 'Нет ачивок этой редкости';
+      }
     }
 
     document.getElementById('passwordInput').addEventListener('keypress', function(e) {
