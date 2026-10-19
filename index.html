@@ -533,23 +533,6 @@
       background: rgba(239, 68, 68, 0.3);
       color: #ef4444;
     }
-    /* Богоподобная — высшая редкость над мифической */
-    .achievement.godlike {
-      border-color: rgba(255, 193, 76, 0.45);
-      animation: glowGodlike 1.8s ease infinite;
-    }
-    @keyframes glowGodlike {
-      0%, 100% { box-shadow: 0 0 20px rgba(255, 193, 76, 0.35), 0 0 45px rgba(255, 120, 200, 0.15); }
-      50% { box-shadow: 0 0 45px rgba(255, 193, 76, 0.75), 0 0 80px rgba(255, 120, 200, 0.3); }
-    }
-    .achievement.godlike:hover {
-      border-color: rgba(255, 193, 76, 0.85);
-    }
-    .achievement.godlike .achievement-points {
-      background: linear-gradient(135deg, rgba(255, 193, 76, 0.35), rgba(255, 120, 200, 0.3));
-      color: #ffd479;
-    }
-
     .hidden { display: none; }
 
     @media (max-width: 768px) {
@@ -679,8 +662,7 @@
           { title: 'Первый код', desc: 'Написал первую программу', type: 'common', points: 1, icon: 'images/icon_vadim_first_code.png' },
           { title: 'Мастер багов', desc: 'Исправил 100 багов', type: 'uncommon', points: 2, icon: 'images/icon_vadim_bug_master.png' },
           { title: 'Легенда кода', desc: '1000 коммитов', type: 'rare', points: 3, icon: 'images/icon_vadim_code_legend.png' },
-          { title: 'Мифический хакер', desc: 'Взломал невозможное', type: 'legendary', points: 4, icon: 'images/icon_vadim_mythic_hacker.png' },
-          { title: 'Просто так', desc: 'Просто потому что', type: 'godlike', points: 6, icon: 'images/avatar_vadim.png' }
+          { title: 'Мифический хакер', desc: 'Взломал невозможное', type: 'legendary', points: 4, icon: 'images/icon_vadim_mythic_hacker.png' }
         ]
       },
       'Эрика': {
@@ -798,8 +780,7 @@
         { type: 'uncommon',  label: 'Необычная',  icon: 'images/crystal_uncommon.png' },
         { type: 'rare',      label: 'Редкая',     icon: 'images/crystal_rare.png' },
         { type: 'legendary', label: 'Легендарная',icon: 'images/crystal_legendary.png' },
-        { type: 'mythic',    label: 'Мифическая', icon: 'images/crystal_mythic.png' },
-        { type: 'godlike',   label: 'Богоподобная', icon: 'images/crystal_godlike.png' }
+        { type: 'mythic',    label: 'Мифическая', icon: 'images/crystal_mythic.png' }
       ];
       const counter = document.getElementById('achievementCounter');
       counter.innerHTML = '';
@@ -845,8 +826,7 @@
         'uncommon': 'Необычная',
         'rare': 'Редкая',
         'legendary': 'Легендарная',
-        'mythic': 'Мифическая',
-        'godlike': 'Богоподобная'
+        'mythic': 'Мифическая'
       };
 
       const list = activeFilter
