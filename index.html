@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Витрина Ачивок</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f1e 100%);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      position: relative;
+    }
+
+    /* Кнопка назад */
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 12px 24px;
+      border: 2px solid rgba(78, 205, 196, 0.5);
+      border-radius: 12px;
+      background: rgba(78, 205, 196, 0.1);
+      color: #4ecdc4;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-button:hover {
+      background: rgba(78, 205, 196, 0.3);
+      transform: translateX(-5px);
+      box-shadow: 0 5px 20px rgba(78, 205, 196, 0.5);
+    }
+
+    .back-button::before {
+      content: '←';
+      font-size: 20px;
+    }
+
+    /* Экран выбора имени */
+    .name-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .name-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(78, 205, 196, 0.3);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      max-width: 500px;
+    }
+
+    .name-box h2 {
+      margin-bottom: 30px;
+      color: #4ecdc4;
+      font-size: 32px;
+    }
+
+    .name-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .name-btn {
+      padding: 20px 40px;
+      border: 2px solid rgba(78, 205, 196, 0.5);
+      border-radius: 15px;
+      background: rgba(78, 205, 196, 0.1);
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .name-btn:hover {
+      background: rgba(78, 205, 196, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 5px 20px rgba(78, 205, 196, 0.5);
+    }
+
+    /* Экран пароля */
+    .password-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+    }
+
+    .password-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(78, 205, 196, 0.3);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .password-box h2 {
+      margin-bottom: 20px;
+      color: #4ecdc4;
+    }
+
+    .password-box input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .password-box button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Профиль */
+    .profile {
+      text-align: center;
+      margin-bottom: 40px;
+      margin-top: 60px;
+    }
+
+    .avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 4px solid #4ecdc4;
+      box-shadow: 0 0 30px rgba(78, 205, 196, 0.5);
+      margin: 0 auto 20px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.3); /* Фон на случай прозрачной картинки */
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .name {
+      font-size: 48px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Уровень и прогресс */
+    .level-section {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(78, 205, 196, 0.3);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 40px;
+    }
+
+    .level-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .level-text {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4ecdc4;
+    }
+
+    .points-text {
+      font-size: 18px;
+      color: #888;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 15px;
+      overflow: hidden;
+      border: 2px solid rgba(78, 205, 196, 0.3);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ecdc4, #44a08d);
+      transition: width 0.5s ease;
+      box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+    }
+
+    /* Витрина */
+    .showcase h2 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 30px;
+    }
+
+    .achievement {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .achievement:hover {
+      transform: translateY(-10px) scale(1.05);
+    }
+
+    .achievement-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      padding: 10px;
+    }
+
+    .achievement-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .achievement-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .achievement-desc {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .achievement-points {
+      font-size: 14px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    /* Типы ачивок */
+    .achievement.common {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .achievement.common:hover {
+      border-color: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 40px rgba(255, 255, 255, 0.2);
+    }
+    .achievement.common .achievement-points {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .achievement.rare {
+      border-color: rgba(59, 130, 246, 0.3);
+      animation: glowRare 2s ease infinite;
+    }
+    @keyframes glowRare {
+      0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+    }
+    .achievement.rare:hover {
+      border-color: rgba(59, 130, 246, 0.6);
+    }
+    .achievement.rare .achievement-points {
+      background: rgba(59, 130, 246, 0.3);
+      color: #3b82f6;
+    }
+
+    .achievement.legendary {
+      border-color: rgba(168, 85, 247, 0.3);
+      animation: glowLegendary 2s ease infinite;
+    }
+    @keyframes glowLegendary {
+      0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); }
+    }
+    .achievement.legendary:hover {
+      border-color: rgba(168, 85, 247, 0.6);
+    }
+    .achievement.legendary .achievement-points {
+      background: rgba(168, 85, 247, 0.3);
+      color: #a855f7;
+    }
+
+    .achievement.mythic {
+      border-color: rgba(234, 88, 12, 0.3);
+      animation: glowMythic 2s ease infinite;
+    }
+    @keyframes glowMythic {
+      0%, 100% { box-shadow: 0 0 20px rgba(234, 88, 12, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(234, 88, 12, 0.6); }
+    }
+    .achievement.mythic:hover {
+      border-color: rgba(234, 88, 12, 0.6);
+    }
+    .achievement.mythic .achievement-points {
+      background: rgba(234, 88, 12, 0.3);
+      color: #ea580c;
+    }
+
+    .achievement.godlike {
+      border-color: rgba(239, 68, 68, 0.3);
+      animation: glowGodlike 2s ease infinite;
+    }
+    @keyframes glowGodlike {
+      0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.6); }
+    }
+    .achievement.godlike:hover {
+      border-color: rgba(239, 68, 68, 0.6);
+    }
+    .achievement.godlike .achievement-points {
+      background: rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 768px) {
+      .back-button {
+        padding: 10px 16px;
+        font-size: 14px;
+        top: 10px;
+        left: 10px;
+      }
+      .profile { margin-top: 80px; }
+      .name { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Экран выбора имени -->
+  <div class="name-screen" id="nameScreen">
+    <div class="name-box">
+      <h2>Выберите профиль</h2>
+      <div class="name-buttons">
+        <button class="name-btn" onclick="selectName('Вадим')">Вадим</button>
+        <button class="name-btn" onclick="selectName('Эрика')">Эрика</button>
+        <button class="name-btn" onclick="selectName('Катя')">Катя</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Экран пароля -->
+  <div class="password-screen hidden" id="passwordScreen">
+    <div class="password-box">
+      <h2 id="passwordTitle">Введите пароль</h2>
+      <input type="password" id="passwordInput" placeholder="Пароль">
+      <button onclick="checkPassword()">Войти</button>
+    </div>
+  </div>
+
+  <!-- Основной контент -->
+  <div class="container hidden" id="mainContent">
+    <!-- Кнопка назад -->
+    <button class="back-button" onclick="goBack()">Назад</button>
+
+    <div class="profile">
+      <div class="avatar">
+        <img src="images/avatar_default.png" alt="Аватар" id="avatarImg">
+      </div>
+      <h1 class="name" id="userName">Имя</h1>
+    </div>
+
+    <!-- Уровень и прогресс -->
+    <div class="level-section">
+      <div class="level-info">
+        <div class="level-text" id="levelText">Уровень 1</div>
+        <div class="points-text" id="pointsText">0 / 5 баллов</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <h2>🏆 Витрина Ачивок</h2>
+      <div class="grid" id="achievementsGrid">
+        <!-- Ачивки будут добавлены через JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Данные пользователей
+    const users = {
+      'Вадим': {
+        password: '1995',
+        avatar: 'images/avatar_vadim.png',
+        achievements: [
+          { title: 'Первый код', desc: 'Написал первую программу', type: 'common', points: 1, icon: 'images/icon_vadim_first_code.png' },
+          { title: 'Мастер багов', desc: 'Исправил 100 багов', type: 'rare', points: 2, icon: 'images/icon_vadim_bug_master.png' },
+          { title: 'Легенда кода', desc: '1000 коммитов', type: 'legendary', points: 3, icon: 'images/icon_vadim_code_legend.png' },
+          { title: 'Мифический хакер', desc: 'Взломал невозможное', type: 'mythic', points: 4, icon: 'images/icon_vadim_mythic_hacker.png' }
+        ]
+      },
+      'Эрика': {
+        password: '1',
+        avatar: 'images/avatar_erika.png',
+        achievements: [
+          { title: 'Первый шаг', desc: 'Начала путь', type: 'common', points: 1, icon: 'images/icon_erika_first_step.png' },
+          { title: 'Быстрая', desc: 'Пробежала 5 км', type: 'rare', points: 2, icon: 'images/icon_erika_fast.png' }
+        ]
+      },
+      'Катя': {
+        password: '2',
+        avatar: 'images/avatar_katya.png',
+        achievements: [
+          { title: 'Книжный червь', desc: 'Прочитала 50 книг', type: 'common', points: 1, icon: 'images/icon_katya_bookworm.png' },
+          { title: 'Марафонец', desc: 'Пробежала 10 км', type: 'rare', points: 2, icon: 'images/icon_katya_marathoner.png' },
+          { title: 'Богоподобная', desc: 'Достигла совершенства', type: 'godlike', points: 5, icon: 'images/icon_katya_godlike.png' }
+        ]
+      }
+    };
+
+    let currentUser = null;
+
+    function selectName(name) {
+      currentUser = name;
+      document.getElementById('nameScreen').classList.add('hidden');
+      document.getElementById('passwordScreen').classList.remove('hidden');
+      document.getElementById('passwordTitle').textContent = `Пароль для ${name}`;
+    }
+
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value;
+      if (input === users[currentUser].password) {
+        document.getElementById('passwordScreen').classList.add('hidden');
+        document.getElementById('mainContent').classList.remove('hidden');
+        loadProfile();
+      } else {
+        alert('Неверный пароль!');
+      }
+    }
+
+    function goBack() {
+      // Сбрасываем состояние
+      currentUser = null;
+      document.getElementById('passwordInput').value = '';
+      
+      // Скрываем профиль, показываем выбор имени
+      document.getElementById('mainContent').classList.add('hidden');
+      document.getElementById('nameScreen').classList.remove('hidden');
+    }
+
+    function loadProfile() {
+      const user = users[currentUser];
+      document.getElementById('userName').textContent = currentUser;
+      document.getElementById('avatarImg').src = user.avatar;
+
+      // Подсчёт баллов
+      let totalPoints = 0;
+      user.achievements.forEach(a => totalPoints += a.points);
+
+      // Расчёт уровня (каждые 5 баллов = 1 уровень)
+      const level = Math.floor(totalPoints / 5) + 1;
+      const pointsInLevel = totalPoints % 5;
+      const progress = (pointsInLevel / 5) * 100;
+
+      document.getElementById('levelText').textContent = `Уровень ${level}`;
+      document.getElementById('pointsText').textContent = `${totalPoints} / ${level * 5} баллов`;
+      document.getElementById('progressFill').style.width = `${progress}%`;
+
+      // Отображение ачивок
+      const grid = document.getElementById('achievementsGrid');
+      grid.innerHTML = '';
+      user.achievements.forEach(a => {
+        const typeNames = {
+          'common': 'Обычная',
+          'rare': 'Редкая',
+          'legendary': 'Легендарная',
+          'mythic': 'Мифическая',
+          'godlike': 'Богоподобная'
+        };
+        const div = document.createElement('div');
+        div.className = `achievement ${a.type}`;
+        div.innerHTML = `
+          <div class="achievement-icon">
+            <img src="${a.icon}" alt="${a.title}">
+          </div>
+          <div class="achievement-title">${a.title}</div>
+          <div class="achievement-desc">${a.desc}</div>
+          <div class="achievement-points">${typeNames[a.type]} · ${a.points} балл${a.points > 1 ? (a.points < 5 ? 'а' : 'ов') : ''}</div>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') checkPassword();
+    });
+  </script>
+</body>
+</html>
