@@ -270,6 +270,75 @@
       object-fit: cover;
     }
 
+    /* ===== Рамки аватара (выбор в профиле) ===== */
+    /* Классическая */
+    .avatar.frame-classic { border-color: #4ecdc4; box-shadow: 0 0 30px rgba(78, 205, 196, 0.5); }
+    /* Огненная — бегущее пламя */
+    .avatar.frame-fire {
+      border: none; padding: 5px; background: transparent;
+      box-shadow: 0 0 35px rgba(255, 107, 53, 0.45);
+      animation: frameFireSpin 3s linear infinite;
+    }
+    @keyframes frameFireSpin {
+      from { background: conic-gradient(from 0deg, #ff6b35, #ffd23f, #ff2e63, #ff6b35); }
+      to   { background: conic-gradient(from 360deg, #ff6b35, #ffd23f, #ff2e63, #ff6b35); }
+    }
+    /* Ледяная — пульсирующее свечение */
+    .avatar.frame-ice {
+      border-color: #7ee8fa;
+      animation: frameIcePulse 2.2s ease-in-out infinite;
+    }
+    @keyframes frameIcePulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(126, 232, 250, 0.4); }
+      50%      { box-shadow: 0 0 50px rgba(126, 232, 250, 0.9); }
+    }
+    /* Золотая — королевское мерцание */
+    .avatar.frame-gold {
+      border: none; padding: 5px;
+      background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      animation: frameGoldShine 3s ease-in-out infinite;
+    }
+    @keyframes frameGoldShine {
+      0%, 100% { box-shadow: 0 0 25px rgba(252, 246, 186, 0.4); }
+      50%      { box-shadow: 0 0 55px rgba(252, 246, 186, 0.9); }
+    }
+    /* Неон — радужная бегущая рамка */
+    .avatar.frame-neon {
+      border: none; padding: 5px;
+      animation: frameNeonSpin 2.5s linear infinite;
+      box-shadow: 0 0 35px rgba(255, 0, 255, 0.35);
+    }
+    @keyframes frameNeonSpin {
+      from { background: conic-gradient(from 0deg, #ff0080, #ff8c00, #ffee00, #00ff87, #00cfff, #8a2be2, #ff0080); }
+      to   { background: conic-gradient(from 360deg, #ff0080, #ff8c00, #ffee00, #00ff87, #00cfff, #8a2be2, #ff0080); }
+    }
+    /* Галактика — космический перелив */
+    .avatar.frame-galaxy {
+      border: none; padding: 5px;
+      animation: frameGalaxyShift 6s ease-in-out infinite alternate;
+      box-shadow: 0 0 40px rgba(138, 43, 226, 0.5);
+    }
+    @keyframes frameGalaxyShift {
+      0%   { background: linear-gradient(45deg, #0f0c29, #8a2be2, #4a00e0, #0f0c29); }
+      50%  { background: linear-gradient(200deg, #306bde, #c026d3, #0f0c29, #306bde); }
+      100% { background: linear-gradient(320deg, #8a2be2, #0f0c29, #c026d3, #8a2be2); }
+    }
+
+    /* Выбор рамки под аватаром */
+    .frame-picker { display: flex; justify-content: center; gap: 12px; margin: -8px auto 26px; flex-wrap: wrap; }
+    .frame-swatch {
+      width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.25); padding: 0; transition: transform .2s, box-shadow .2s;
+    }
+    .frame-swatch:hover { transform: scale(1.15); }
+    .frame-swatch.active { transform: scale(1.2); box-shadow: 0 0 12px rgba(255,255,255,0.7); border-color: #fff; }
+    .sw-classic { background: #4ecdc4; }
+    .sw-fire    { background: conic-gradient(#ff6b35, #ffd23f, #ff2e63, #ff6b35); }
+    .sw-ice     { background: linear-gradient(135deg, #7ee8fa, #a8edea); }
+    .sw-gold    { background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728); }
+    .sw-neon    { background: conic-gradient(#ff0080, #ffee00, #00ff87, #00cfff, #8a2be2, #ff0080); }
+    .sw-galaxy  { background: linear-gradient(45deg, #0f0c29, #8a2be2, #c026d3); }
+
     .name {
       font-size: 48px;
       font-weight: bold;
@@ -622,9 +691,11 @@
     <button class="back-button" onclick="goBack()">Назад</button>
 
     <div class="profile">
-      <div class="avatar">
+      <div class="avatar frame-classic" id="avatarWrap">
         <img src="images/avatar_default.png" alt="Аватар" id="avatarImg">
       </div>
+      <!-- Выбор рамки аватара -->
+      <div class="frame-picker" id="framePicker"></div>
       <h1 class="name" id="userName">Имя</h1>
     </div>
 
@@ -691,6 +762,46 @@
 
     let currentUser = null;
 
+    /* ===== Выбор рамки аватара ===== */
+    const FRAMES = [
+      { id: 'classic', label: 'Классическая' },
+      { id: 'fire',    label: 'Огненная' },
+      { id: 'ice',     label: 'Ледяная' },
+      { id: 'gold',    label: 'Золотая' },
+      { id: 'neon',    label: 'Неоновая' },
+      { id: 'galaxy',  label: 'Галактика' }
+    ];
+
+    function frameKey(name) { return 'frame_' + name; }
+
+    function getSavedFrame(name) {
+      try {
+        const saved = localStorage.getItem(frameKey(name));
+        return FRAMES.some(f => f.id === saved) ? saved : 'classic';
+      } catch (e) { return 'classic'; }
+    }
+
+    function applyFrame(frameId) {
+      const wrap = document.getElementById('avatarWrap');
+      FRAMES.forEach(f => wrap.classList.remove('frame-' + f.id));
+      wrap.classList.add('frame-' + frameId);
+    }
+
+    function renderFramePicker() {
+      const picker = document.getElementById('framePicker');
+      const current = getSavedFrame(currentUser);
+      picker.innerHTML = FRAMES.map(f =>
+        `<button class="frame-swatch sw-${f.id}${f.id === current ? ' active' : ''}" title="${f.label}" onclick="setFrame('${f.id}')"></button>`
+      ).join('');
+    }
+
+    function setFrame(frameId) {
+      if (!currentUser) return;
+      try { localStorage.setItem(frameKey(currentUser), frameId); } catch (e) {}
+      applyFrame(frameId);
+      renderFramePicker();
+    }
+
     /* Копилки на экране выбора: суммарные баллы за ачивки каждого профиля */
     function renderPiggyBanks() {
       for (const name of Object.keys(users)) {
@@ -752,6 +863,10 @@
       const user = users[currentUser];
       document.getElementById('userName').textContent = currentUser;
       document.getElementById('avatarImg').src = user.avatar;
+
+      // Рамка аватара: восстановить выбранную ранее для этого профиля
+      applyFrame(getSavedFrame(currentUser));
+      renderFramePicker();
 
       // Подсчёт баллов
       let totalPoints = 0;
