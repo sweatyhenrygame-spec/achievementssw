@@ -234,6 +234,47 @@
     }
 
     /* Витрина */
+    /* Счётчик ачивок по редкости */
+    .achievement-counter {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .counter-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 8px 14px;
+      min-width: 70px;
+    }
+
+    .counter-item img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .counter-item .counter-count {
+      font-size: 1.25em;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .counter-item .counter-label {
+      font-size: 0.75em;
+      opacity: 0.7;
+    }
+
+    .counter-item.zero {
+      opacity: 0.35;
+    }
+
     .showcase h2 {
       text-align: center;
       font-size: 36px;
@@ -438,6 +479,9 @@
       </div>
     </div>
 
+    <!-- Счётчик ачивок по редкости -->
+    <div class="achievement-counter" id="achievementCounter"></div>
+
     <div class="showcase">
       <h2>🏆 Витрина Ачивок</h2>
       <div class="grid" id="achievementsGrid">
@@ -546,6 +590,28 @@
       document.getElementById('pointsText').textContent = `${remaining} / ${needed} баллов`;
 
       document.getElementById('progressFill').style.width = `${progress}%`;
+
+      // Счётчик ачивок по редкости (кристалл + количество)
+      const rarityInfo = [
+        { type: 'common',    label: 'Обычная',    icon: 'images/crystal_common.png' },
+        { type: 'uncommon',  label: 'Необычная',  icon: 'images/crystal_uncommon.png' },
+        { type: 'rare',      label: 'Редкая',     icon: 'images/crystal_rare.png' },
+        { type: 'legendary', label: 'Легендарная',icon: 'images/crystal_legendary.png' },
+        { type: 'mythic',    label: 'Мифическая', icon: 'images/crystal_mythic.png' }
+      ];
+      const counter = document.getElementById('achievementCounter');
+      counter.innerHTML = '';
+      rarityInfo.forEach(r => {
+        const count = user.achievements.filter(a => a.type === r.type).length;
+        const item = document.createElement('div');
+        item.className = 'counter-item' + (count === 0 ? ' zero' : '');
+        item.title = r.label;
+        item.innerHTML = `
+          <img src="${r.icon}" alt="${r.label}">
+          <span class="counter-count">${count}</span>
+        `;
+        counter.appendChild(item);
+      });
 
       // Отображение ачивок
       const grid = document.getElementById('achievementsGrid');
