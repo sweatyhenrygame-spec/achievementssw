@@ -64,35 +64,56 @@
       align-items: center;
       justify-content: center;
       z-index: 9999;
+      transition: background 0.4s ease;
+    }
+
+    /* Акцентный цвет окна выбора профиля — меняется при наведении на кнопку */
+    .name-screen { --accent: #4ecdc4; }
+    .name-screen[data-hover="Вадим"] { --accent: #ff6b6b; }
+    .name-screen[data-hover="Эрика"] { --accent: #ffe66d; }
+    .name-screen[data-hover="Катя"]  { --accent: #a8e6cf; }
+    .name-screen[data-hover="Леша"]  { --accent: #c56cf0; }
+
+    /* Фон всего окна мягко подсвечивается цветом наведённого профиля */
+    .name-screen[data-hover] {
+      background: radial-gradient(ellipse at center,
+        color-mix(in srgb, var(--accent) 12%, transparent) 0%,
+        rgba(0, 0, 0, 0.95) 70%);
     }
 
     .name-box {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(78, 205, 196, 0.3);
+      background: color-mix(in srgb, var(--accent) 6%, rgba(255, 255, 255, 0.03));
+      border: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
       border-radius: 20px;
       padding: 40px;
       text-align: center;
-      max-width: 500px;
+      width: min(640px, 92vw);
+      transition: border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .name-screen[data-hover] .name-box {
+      box-shadow: 0 0 40px color-mix(in srgb, var(--accent) 25%, transparent);
     }
 
     .name-box h2 {
       margin-bottom: 30px;
-      color: #4ecdc4;
+      color: var(--accent);
       font-size: 32px;
+      transition: color 0.4s ease;
     }
 
     .name-buttons {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 15px;
-      justify-content: center;
-      flex-wrap: wrap;
     }
 
     .name-btn {
-      padding: 20px 40px;
-      border: 2px solid rgba(78, 205, 196, 0.5);
+      width: 100%;
+      aspect-ratio: 2 / 1;   /* все кнопки одного размера */
+      border: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
       border-radius: 15px;
-      background: rgba(78, 205, 196, 0.1);
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
       color: #fff;
       font-size: 20px;
       font-weight: bold;
@@ -101,9 +122,10 @@
     }
 
     .name-btn:hover {
-      background: rgba(78, 205, 196, 0.3);
+      background: color-mix(in srgb, var(--accent) 30%, transparent);
+      border-color: var(--accent);
       transform: scale(1.05);
-      box-shadow: 0 5px 20px rgba(78, 205, 196, 0.5);
+      box-shadow: 0 5px 25px color-mix(in srgb, var(--accent) 55%, transparent);
     }
 
     /* Экран пароля */
@@ -465,10 +487,10 @@
     <div class="name-box">
       <h2>Выберите профиль</h2>
       <div class="name-buttons">
-        <button class="name-btn" onclick="selectName('Вадим')">Вадим</button>
-        <button class="name-btn" onclick="selectName('Эрика')">Эрика</button>
-        <button class="name-btn" onclick="selectName('Катя')">Катя</button>
-        <button class="name-btn" onclick="selectName('Леша')">Леша</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Вадим')" onmouseleave="clearProfileAccent()" onclick="selectName('Вадим')">Вадим</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Эрика')" onmouseleave="clearProfileAccent()" onclick="selectName('Эрика')">Эрика</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Катя')" onmouseleave="clearProfileAccent()" onclick="selectName('Катя')">Катя</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Леша')" onmouseleave="clearProfileAccent()" onclick="selectName('Леша')">Леша</button>
       </div>
     </div>
   </div>
@@ -560,9 +582,18 @@
 
     function selectName(name) {
       currentUser = name;
+      clearProfileAccent();
       document.getElementById('nameScreen').classList.add('hidden');
       document.getElementById('passwordScreen').classList.remove('hidden');
       document.getElementById('passwordTitle').textContent = `Пароль для ${name}`;
+    }
+
+    /* Смена акцентного цвета окна выбора профиля при наведении */
+    function setProfileAccent(name) {
+      document.getElementById('nameScreen').dataset.hover = name;
+    }
+    function clearProfileAccent() {
+      delete document.getElementById('nameScreen').dataset.hover;
     }
 
     function checkPassword() {
