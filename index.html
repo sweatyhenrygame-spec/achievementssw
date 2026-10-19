@@ -525,13 +525,21 @@
       let totalPoints = 0;
       user.achievements.forEach(a => totalPoints += a.points);
 
-      // Расчёт уровня (каждые 5 баллов = 1 уровень)
-      const level = Math.floor(totalPoints / 5) + 1;
-      const pointsInLevel = totalPoints % 5;
-      const progress = (pointsInLevel / 5) * 100;
+      // Расчёт уровня: каждый уровень начинается с 0,
+      // для 1-го нужно 5 баллов, для 2-го — 10 и т.д. (+5 за каждый уровень)
+      let level = 0;
+      let needed = 5;   // баллов до следующего уровня
+      let remaining = totalPoints;
+      while (remaining >= needed) {
+        remaining -= needed;
+        level++;
+        needed += 5;
+      }
+      const progress = (remaining / needed) * 100;
 
       document.getElementById('levelText').textContent = `Уровень ${level}`;
-      document.getElementById('pointsText').textContent = `${totalPoints} / ${level * 5} баллов`;
+      document.getElementById('pointsText').textContent = `${remaining} / ${needed} баллов`;
+
       document.getElementById('progressFill').style.width = `${progress}%`;
 
       // Отображение ачивок
