@@ -401,6 +401,7 @@
 
   <!-- Экран пароля -->
   <div class="password-screen hidden" id="passwordScreen">
+    <button class="back-button" onclick="backToNames()">Назад</button>
     <div class="password-box">
       <h2 id="passwordTitle">Введите пароль</h2>
       <input type="password" id="passwordInput" placeholder="Пароль">
@@ -487,6 +488,14 @@
       } else {
         alert('Неверный пароль!');
       }
+    }
+
+    function backToNames() {
+      // Возврат с экрана пароля на экран выбора имени
+      currentUser = null;
+      document.getElementById('passwordInput').value = '';
+      document.getElementById('passwordScreen').classList.add('hidden');
+      document.getElementById('nameScreen').classList.remove('hidden');
     }
 
     function goBack() {
