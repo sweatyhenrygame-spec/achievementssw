@@ -119,6 +119,21 @@
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .name-btn-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid color-mix(in srgb, var(--accent) 70%, transparent);
+      background: rgba(255,255,255,0.06);
+      transition: all 0.3s ease;
     }
 
     .name-btn:hover {
@@ -126,6 +141,12 @@
       border-color: var(--accent);
       transform: scale(1.05);
       box-shadow: 0 5px 25px color-mix(in srgb, var(--accent) 55%, transparent);
+    }
+
+    .name-btn:hover .name-btn-avatar {
+      border-color: var(--accent);
+      box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 70%, transparent);
+      transform: scale(1.08);
     }
 
     /* Экран пароля */
@@ -487,10 +508,10 @@
     <div class="name-box">
       <h2>Выберите профиль</h2>
       <div class="name-buttons">
-        <button class="name-btn" onmouseenter="setProfileAccent('Вадим')" onmouseleave="clearProfileAccent()" onclick="selectName('Вадим')">Вадим</button>
-        <button class="name-btn" onmouseenter="setProfileAccent('Эрика')" onmouseleave="clearProfileAccent()" onclick="selectName('Эрика')">Эрика</button>
-        <button class="name-btn" onmouseenter="setProfileAccent('Катя')" onmouseleave="clearProfileAccent()" onclick="selectName('Катя')">Катя</button>
-        <button class="name-btn" onmouseenter="setProfileAccent('Леша')" onmouseleave="clearProfileAccent()" onclick="selectName('Леша')">Леша</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Вадим')" onmouseleave="clearProfileAccent()" onclick="selectName('Вадим')"><img class="name-btn-avatar" src="images/avatar_vadim.png" alt="Аватар Вадим">Вадим</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Эрика')" onmouseleave="clearProfileAccent()" onclick="selectName('Эрика')"><img class="name-btn-avatar" src="images/avatar_erika.png" alt="Аватар Эрика">Эрика</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Катя')" onmouseleave="clearProfileAccent()" onclick="selectName('Катя')"><img class="name-btn-avatar" src="images/avatar_katya.png" alt="Аватар Катя">Катя</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Леша')" onmouseleave="clearProfileAccent()" onclick="selectName('Леша')"><img class="name-btn-avatar" src="images/avatar_lesha.png" alt="Аватар Леша">Леша</button>
       </div>
     </div>
   </div>
