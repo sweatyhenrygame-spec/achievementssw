@@ -273,39 +273,39 @@
       border-radius: inherit;
     }
 
-    /* Кнопка загрузки аватара — слева от аватара (снаружи) */
+    /* Строка профиля: [кнопка 📷] [аватар] [питомец] — flex-раскладка,
+       чтобы кнопка не перекрывалась и гарантированно была видна слева */
     .profile-row {
-      position: relative;
-    }
-    .avatar-edit-btn {
-      position: absolute;
-      top: 50%;
-      right: calc(100% + 14px);
-      transform: translateY(-50%);
-      z-index: 5;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.7);
-      background: rgba(0, 0, 0, 0.55);
-      color: #fff;
-      font-size: 22px;
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.2s ease, background 0.2s ease;
+      gap: 16px;
+    }
+    .avatar-edit-btn {
+      flex: 0 0 auto;
+      order: -1;                 /* встать слева от аватара */
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.75);
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 0 14px rgba(78, 205, 196, 0.35);
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
     }
     .avatar-edit-btn:hover {
-      transform: translateY(-50%) scale(1.12);
-      background: rgba(78, 205, 196, 0.8);
+      transform: scale(1.15);
+      background: rgba(78, 205, 196, 0.85);
+      box-shadow: 0 0 20px rgba(78, 205, 196, 0.7);
     }
     @media (max-width: 600px) {
+      .profile-row { gap: 10px; }
       .avatar-edit-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
-        right: calc(100% + 8px);
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
       }
     }
     .avatar-reset-btn {
@@ -726,10 +726,10 @@
     <div class="name-box">
       <h2>Выберите профиль</h2>
       <div class="name-buttons">
-        <button class="name-btn" onmouseenter="setProfileAccent('Вадим')" onmouseleave="clearProfileAccent()" onclick="selectName('Вадим')"><div class="name-btn-media"><img class="name-btn-avatar" src="images/avatar_vadim.png" alt="Аватар Вадим"><span class="piggy-bank" title="Всего баллов за ачивки"><img class="piggy-crystal" src="images/crystal_common.png" alt="Кристалл баллов"><span class="coins" id="bank-Вадим">…</span></span></div>Вадим</button>
-        <button class="name-btn" onmouseenter="setProfileAccent('Эрика')" onmouseleave="clearProfileAccent()" onclick="selectName('Эрика')"><div class="name-btn-media"><img class="name-btn-avatar" src="images/avatar_erika.png" alt="Аватар Эрика"><span class="piggy-bank" title="Всего баллов за ачивки"><img class="piggy-crystal" src="images/crystal_common.png" alt="Кристалл баллов"><span class="coins" id="bank-Эрика">…</span></span></div>Эрика</button>
-        <button class="name-btn" onmouseenter="setProfileAccent('Катя')" onmouseleave="clearProfileAccent()" onclick="selectName('Катя')"><div class="name-btn-media"><img class="name-btn-avatar" src="images/avatar_katya.png" alt="Аватар Катя"><span class="piggy-bank" title="Всего баллов за ачивки"><img class="piggy-crystal" src="images/crystal_common.png" alt="Кристалл баллов"><span class="coins" id="bank-Катя">…</span></span></div>Катя</button>
-        <button class="name-btn" onmouseenter="setProfileAccent('Леша')" onmouseleave="clearProfileAccent()" onclick="selectName('Леша')"><div class="name-btn-media"><img class="name-btn-avatar" src="images/avatar_lesha.png" alt="Аватар Леша"><span class="piggy-bank" title="Всего баллов за ачивки"><img class="piggy-crystal" src="images/crystal_common.png" alt="Кристалл баллов"><span class="coins" id="bank-Леша">…</span></span></div>Леша</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Вадим')" onmouseleave="clearProfileAccent()" onclick="selectName('Вадим')"><div class="name-btn-media"><img class="name-btn-avatar" id="nameAvatar-Вадим" src="images/avatar_vadim.png" alt="Аватар Вадим"><span class="piggy-bank" title="Всего баллов за ачивки"><img class="piggy-crystal" src="images/crystal_common.png" alt="Кристалл баллов"><span class="coins" id="bank-Вадим">…</span></span></div>Вадим</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Эрика')" onmouseleave="clearProfileAccent()" onclick="selectName('Эрика')"><div class="name-btn-media"><img class="name-btn-avatar" id="nameAvatar-Эрика" src="images/avatar_erika.png" alt="Аватар Эрика"><span class="piggy-bank" title="Всего баллов за ачивки"><img class="piggy-crystal" src="images/crystal_common.png" alt="Кристалл баллов"><span class="coins" id="bank-Эрика">…</span></span></div>Эрика</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Катя')" onmouseleave="clearProfileAccent()" onclick="selectName('Катя')"><div class="name-btn-media"><img class="name-btn-avatar" id="nameAvatar-Катя" src="images/avatar_katya.png" alt="Аватар Катя"><span class="piggy-bank" title="Всего баллов за ачивки"><img class="piggy-crystal" src="images/crystal_common.png" alt="Кристалл баллов"><span class="coins" id="bank-Катя">…</span></span></div>Катя</button>
+        <button class="name-btn" onmouseenter="setProfileAccent('Леша')" onmouseleave="clearProfileAccent()" onclick="selectName('Леша')"><div class="name-btn-media"><img class="name-btn-avatar" id="nameAvatar-Леша" src="images/avatar_lesha.png" alt="Аватар Леша"><span class="piggy-bank" title="Всего баллов за ачивки"><img class="piggy-crystal" src="images/crystal_common.png" alt="Кристалл баллов"><span class="coins" id="bank-Леша">…</span></span></div>Леша</button>
       </div>
     </div>
   </div>
@@ -867,6 +867,14 @@
       document.getElementById('avatarImg').src = custom || users[currentUser].avatar;
       document.getElementById('avatarResetBtn').classList.toggle('visible', !!custom);
     }
+    /* Аватары на экране выбора профиля: подтягиваем загруженные пользователями */
+    function refreshNameScreenAvatars() {
+      const all = getCustomAvatars();
+      for (const name of Object.keys(users)) {
+        const img = document.getElementById('nameAvatar-' + name);
+        if (img) img.src = all[name] || users[name].avatar;
+      }
+    }
     function handleAvatarUpload(event) {
       const file = event.target.files[0];
       if (!file || !currentUser) return;
@@ -896,6 +904,7 @@
           return;
         }
         applyAvatar();
+        refreshNameScreenAvatars(); // загруженный аватар сразу появится и на экране выбора
       };
       img.onerror = () => { URL.revokeObjectURL(url); alert('Не удалось загрузить изображение.'); };
       img.src = url;
@@ -907,6 +916,7 @@
       delete all[currentUser];
       localStorage.setItem(AVATAR_KEY, JSON.stringify(all));
       applyAvatar();
+      refreshNameScreenAvatars();
     }
 
     function togglePet(id) {
@@ -946,6 +956,7 @@
       }
     }
     renderPiggyBanks();
+    refreshNameScreenAvatars(); // при старте показываем сохранённые аватары на экране выбора
 
     function selectName(name) {
       currentUser = name;
@@ -985,6 +996,7 @@
       document.getElementById('passwordInput').value = '';
       document.getElementById('passwordScreen').classList.add('hidden');
       document.getElementById('nameScreen').classList.remove('hidden');
+      refreshNameScreenAvatars();
     }
 
     function goBack() {
@@ -996,6 +1008,7 @@
       // Скрываем профиль, показываем выбор имени
       document.getElementById('mainContent').classList.add('hidden');
       document.getElementById('nameScreen').classList.remove('hidden');
+      refreshNameScreenAvatars();
     }
 
     function loadProfile() {
