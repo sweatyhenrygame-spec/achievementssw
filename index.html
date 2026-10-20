@@ -273,6 +273,50 @@
       border-radius: inherit;
     }
 
+    /* Кнопка загрузки аватара */
+    .avatar-edit-btn {
+      position: absolute;
+      right: 6px;
+      bottom: 6px;
+      z-index: 5;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .avatar-edit-btn:hover {
+      transform: scale(1.12);
+      background: rgba(78, 205, 196, 0.8);
+    }
+    .avatar-reset-btn {
+      position: absolute;
+      left: 6px;
+      bottom: 6px;
+      z-index: 5;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      background: rgba(0, 0, 0, 0.45);
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .avatar-reset-btn.visible { display: flex; }
+    .avatar-reset-btn:hover { transform: scale(1.12); background: rgba(255, 107, 107, 0.8); }
+
     /* Питомец справа от аватара */
     .profile-row {
       position: relative;
@@ -306,6 +350,11 @@
     }
 
     /* Выбор питомца под аватаром */
+    @media (max-width: 600px) {
+      .avatar-edit-btn { width: 32px; height: 32px; font-size: 14px; right: 4px; bottom: 4px; }
+      .avatar-reset-btn { width: 26px; height: 26px; font-size: 12px; left: 4px; bottom: 4px; }
+    }
+
     .pet-picker {
       display: flex;
       justify-content: center;
@@ -692,6 +741,9 @@
       <div class="profile-row">
         <div class="avatar" id="avatarWrap">
           <img src="images/avatar_default.png" alt="Аватар" id="avatarImg">
+          <button class="avatar-edit-btn" id="avatarEditBtn" title="Загрузить свой аватар" onclick="document.getElementById('avatarUpload').click()">📷</button>
+          <button class="avatar-reset-btn" id="avatarResetBtn" title="Вернуть стандартный аватар" onclick="resetAvatar()">↺</button>
+          <input type="file" id="avatarUpload" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
         </div>
         <span class="pet-display hidden" id="petDisplay"></span>
       </div>
@@ -791,6 +843,60 @@
       updatePetDisplay(false);
     }
 
+    /* ===== Загрузка своего аватара (сохраняется в localStorage) ===== */
+    const AVATAR_KEY = 'customAvatars_v1';
+    function getCustomAvatars() {
+      try { return JSON.parse(localStorage.getItem(AVATAR_KEY)) || {}; }
+      catch (e) { return {}; }
+    }
+    function applyAvatar() {
+      if (!currentUser) return;
+      const custom = getCustomAvatars()[currentUser];
+      document.getElementById('avatarImg').src = custom || users[currentUser].avatar;
+      document.getElementById('avatarResetBtn').classList.toggle('visible', !!custom);
+    }
+    function handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      if (!file || !currentUser) return;
+      if (!file.type.startsWith('image/')) { alert('Пожалуйста, выберите файл изображения.'); return; }
+      if (file.size > 5 * 1024 * 1024) { alert('Файл слишком большой (максимум 5 МБ).'); return; }
+      // Рисуем на canvas: кроп по центру в квадрат + ресайз до 300px — лёгкий и совместимый результат
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const size = 300;
+        const side = Math.min(img.width, img.height);
+        const sx = (img.width - side) / 2;
+        const sy = (img.height - side) / 2;
+        const canvas = document.createElement('canvas');
+        canvas.width = size; canvas.height = size;
+        canvas.getContext('2d').drawImage(img, sx, sy, side, side, 0, 0, size, size);
+        URL.revokeObjectURL(url);
+        let dataUrl;
+        try { dataUrl = canvas.toDataURL('image/jpeg', 0.85); }
+        catch (e) { alert('Не удалось обработать изображение.'); return; }
+        const all = getCustomAvatars();
+        all[currentUser] = dataUrl;
+        try {
+          localStorage.setItem(AVATAR_KEY, JSON.stringify(all));
+        } catch (e) {
+          alert('Не хватило места для сохранения аватара. Попробуйте картинку меньшего размера.');
+          return;
+        }
+        applyAvatar();
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); alert('Не удалось загрузить изображение.'); };
+      img.src = url;
+      event.target.value = ''; // сброс, чтобы один и тот же файл можно было выбрать повторно
+    }
+    function resetAvatar() {
+      if (!currentUser) return;
+      const all = getCustomAvatars();
+      delete all[currentUser];
+      localStorage.setItem(AVATAR_KEY, JSON.stringify(all));
+      applyAvatar();
+    }
+
     function togglePet(id) {
       const sel = getPetSelections();
       if (sel[currentUser] === id) delete sel[currentUser];  // повторный клик — убрать
@@ -834,6 +940,8 @@
       clearProfileAccent();
       document.getElementById('nameScreen').classList.add('hidden');
       document.getElementById('passwordScreen').classList.remove('hidden');
+        document.getElementById('avatarEditBtn').style.display = 'none';
+        document.getElementById('avatarResetBtn').style.visibility = 'hidden';
       document.getElementById('passwordTitle').textContent = `Пароль для ${name}`;
     }
 
@@ -850,6 +958,9 @@
       if (input === users[currentUser].password) {
         document.getElementById('passwordScreen').classList.add('hidden');
         document.getElementById('mainContent').classList.remove('hidden');
+        document.getElementById('avatarEditBtn').style.display = '';
+        applyAvatar(); // показать загруженный аватар, если он есть
+        document.getElementById('avatarResetBtn').style.visibility = '';
         loadProfile();
       } else {
         alert('Неверный пароль!');
@@ -878,7 +989,7 @@
     function loadProfile() {
       const user = users[currentUser];
       document.getElementById('userName').textContent = currentUser;
-      document.getElementById('avatarImg').src = user.avatar;
+      applyAvatar();
       renderPetPicker();
 
       // Подсчёт баллов
